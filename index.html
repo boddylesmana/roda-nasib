@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roda Nasib – Pembagian Tugas</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --text:#3d3756; --muted:#8a84a6; --accent:#ff7aa2; --accent-dark:#e85d87; --glass:rgba(255,255,255,.62); --line:rgba(255,255,255,.9);
+    --font-title:"Fredoka","Segoe UI",sans-serif; --font:"Nunito","Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--font);color:var(--text);min-height:100vh;overflow-x:hidden;position:relative;
+    display:flex;flex-direction:column;align-items:center;padding:34px 16px 70px;
+    background:linear-gradient(120deg,#ffe3ec,#fff1d6,#e3f6ff,#ece3ff,#ffe3ec);background-size:400% 400%;animation:mesh 24s ease infinite;
+  }
+  @keyframes mesh{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.6;z-index:0;pointer-events:none;animation:float 14s ease-in-out infinite;mix-blend-mode:multiply}
+  .b1{width:460px;height:460px;background:#ffc2d4;top:-140px;left:-140px}
+  .b2{width:420px;height:420px;background:#bde9ff;bottom:-140px;right:-120px;animation-delay:-5s}
+  .b3{width:320px;height:320px;background:#fff3b0;top:38%;right:-90px;animation-delay:-9s}
+  .b4{width:300px;height:300px;background:#d9ccff;bottom:12%;left:-80px;animation-delay:-3s}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(26px,-30px) scale(1.08)}}
+  .stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .star{position:absolute;width:6px;height:6px;background:#fff;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);animation:twinkle var(--t) ease-in-out infinite;animation-delay:var(--d);opacity:0}
+  @keyframes twinkle{0%,100%{opacity:0;transform:scale(.4) rotate(0)}50%{opacity:.95;transform:scale(1.3) rotate(45deg)}}
+
+  header{position:relative;z-index:1;text-align:center;margin-bottom:34px}
+  h1{font-family:var(--font-title);font-weight:700;font-size:clamp(38px,6.5vw,64px);letter-spacing:.5px;line-height:1.05;
+     background:linear-gradient(90deg,#ff7aa2,#ffa94d,#5fcfff,#b388ff,#ff7aa2);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite;
+     filter:drop-shadow(0 6px 14px rgba(255,122,162,.25))}
+  @keyframes shine{to{background-position:300% 0}}
+  h1 .em{display:inline-block;-webkit-text-fill-color:initial;animation:wiggle 2.6s ease-in-out infinite}
+  @keyframes wiggle{0%,100%{transform:rotate(-10deg) translateY(0)}50%{transform:rotate(10deg) translateY(-4px)}}
+  .tag{color:var(--muted);font-weight:700;margin-top:8px;font-size:17px}
+
+  .layout{position:relative;z-index:1;display:flex;gap:44px;flex-wrap:wrap;justify-content:center;align-items:center;width:100%;max-width:1120px}
+
+  /* wheel + orbiting heroes */
+  .arena{position:relative;width:min(92vw,640px);height:min(92vw,640px);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .ring{position:absolute;inset:0;animation:orbit 60s linear infinite}
+  .arena.spinning .ring{animation-duration:14s}
+  @keyframes orbit{to{transform:rotate(360deg)}}
+  .orb{position:absolute;top:50%;left:50%;width:0;height:0;transform:rotate(calc(var(--i)*360deg/8))}
+  .hero{position:absolute;left:-48px;top:calc(min(92vw,640px)/-2 - 4px);width:96px;height:130px;
+        animation:orbitfix 60s linear infinite,bob 3.2s ease-in-out infinite;animation-delay:0s,var(--d);
+        filter:drop-shadow(0 10px 14px rgba(90,70,120,.28));transition:transform .25s;cursor:pointer}
+  .arena.spinning .hero{animation:orbitfix 14s linear infinite,hop .5s ease-in-out infinite;animation-delay:0s,var(--d)}
+  .arena.party .hero{animation:orbitfix 60s linear infinite,party .6s ease-in-out infinite;animation-delay:0s,var(--d)}
+  @keyframes orbitfix{to{rotate:-360deg}}
+  @keyframes bob{0%,100%{translate:0 0;scale:1}50%{translate:0 -10px;scale:1.03}}
+  @keyframes hop{0%,100%{translate:0 0}50%{translate:0 -22px}}
+  @keyframes party{0%,100%{translate:0 0;rotate:-360deg}25%{translate:-6px -26px}50%{translate:0 -4px}75%{translate:6px -26px}}
+  .hero:hover{transform:scale(1.18)}
+  .hero .pic{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none;filter:drop-shadow(0 12px 16px rgba(60,40,90,.35))}
+  .hero.has-pic .pic{display:block;animation:breathe 3.4s ease-in-out infinite;animation-delay:var(--d);transform-origin:50% 100%}
+  .hero.has-pic svg{display:none}
+  .arena.spinning .hero.has-pic .pic{animation:lean .5s ease-in-out infinite alternate;animation-delay:var(--d)}
+  .arena.party .hero.has-pic .pic{animation:jump .6s ease-in-out infinite;animation-delay:var(--d)}
+  @keyframes breathe{0%,100%{transform:scaleY(1) rotate(-2deg)}50%{transform:scaleY(1.03) rotate(2deg)}}
+  @keyframes lean{from{transform:rotate(-8deg) translateY(0)}to{transform:rotate(8deg) translateY(-6px)}}
+  @keyframes jump{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.08) rotate(-4deg)}}
+  .hero svg{width:100%;height:100%;overflow:visible}
+  .hero .eyes{animation:blink 4.5s infinite;animation-delay:var(--d);transform-origin:50px 40px}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+  .hero .cape{transform-origin:50px 68px;animation:cape 2.4s ease-in-out infinite;animation-delay:var(--d)}
+  @keyframes cape{0%,100%{transform:skewX(0) scaleX(1)}50%{transform:skewX(-7deg) scaleX(1.06)}}
+  .hero .hair{transform-origin:50px 30px;animation:cape 3s ease-in-out infinite reverse}
+  .hero .armL{transform-origin:24px 70px;animation:wave 2.8s ease-in-out infinite;animation-delay:var(--d)}
+  .hero .armR{transform-origin:76px 70px;animation:wave 2.8s ease-in-out infinite reverse;animation-delay:var(--d)}
+  @keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(14deg)}}
+  .arena.party .hero .armL{animation:cheer .6s ease-in-out infinite}
+  .arena.party .hero .armR{animation:cheer .6s ease-in-out infinite reverse}
+  @keyframes cheer{0%,100%{transform:rotate(160deg)}50%{transform:rotate(200deg)}}
+  .hero .glow{animation:glow 1.6s ease-in-out infinite}
+  @keyframes glow{0%,100%{opacity:1;filter:drop-shadow(0 0 2px currentColor)}50%{opacity:.6;filter:drop-shadow(0 0 8px #fff)}}
+  .hero .nm{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:800;color:var(--text);white-space:nowrap;
+            background:var(--glass);padding:2px 10px;border-radius:999px;opacity:0;transition:opacity .2s;backdrop-filter:blur(6px)}
+  .hero:hover .nm{opacity:1}
+
+  .wheel-wrap{position:relative;width:72%;height:72%;z-index:2}
+  .wheel-wrap::before{content:"";position:absolute;inset:-22px;border-radius:50%;
+     background:conic-gradient(from 0deg,#ffb3c6,#ffd6a5,#fdffb6,#caffbf,#9bf6ff,#bdb2ff,#ffc6ff,#ffb3c6);filter:blur(16px);opacity:.75;animation:orbit 18s linear infinite}
+  .wheel-wrap::after{content:"";position:absolute;inset:-12px;border-radius:50%;background:#fff;box-shadow:0 20px 50px rgba(120,90,150,.25),inset 0 0 0 6px #fff,inset 0 0 0 9px #ffe3ec}
+  canvas{position:relative;z-index:1;width:100%;height:100%;border-radius:50%;box-shadow:inset 0 0 0 4px rgba(255,255,255,.9)}
+  .wheel-wrap.shake{animation:shake .12s linear 3}
+  @keyframes shake{0%,100%{transform:translate(0)}25%{transform:translate(-3px,2px)}75%{transform:translate(3px,-2px)}}
+  .pointer{position:absolute;top:-24px;left:50%;transform:translateX(-50%);z-index:4;width:50px;height:60px;transform-origin:50% 20%;
+    background:linear-gradient(#ff9ebc,var(--accent));clip-path:polygon(50% 100%,0 25%,15% 0,85% 0,100% 25%);filter:drop-shadow(0 6px 8px rgba(232,93,135,.45))}
+  .pointer::after{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:#fff}
+  .pointer.tick{animation:ptick .12s ease-out}
+  @keyframes ptick{0%{transform:translateX(-50%) rotate(0)}40%{transform:translateX(-50%) rotate(-16deg)}100%{transform:translateX(-50%) rotate(0)}}
+  .center-btn{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:118px;height:118px;border-radius:50%;z-index:4;
+    border:6px solid #fff;background:linear-gradient(145deg,#ff9ebc,var(--accent));color:#fff;
+    font-family:var(--font-title);font-weight:700;font-size:24px;letter-spacing:1px;cursor:pointer;
+    box-shadow:0 10px 25px rgba(232,93,135,.45),inset 0 -4px 0 rgba(0,0,0,.08);transition:transform .15s;
+  }
+  .center-btn::before{content:"";position:absolute;inset:-14px;border-radius:50%;border:3px solid rgba(255,122,162,.5);animation:pulse 2s ease-out infinite}
+  @keyframes pulse{0%{transform:scale(.85);opacity:1}100%{transform:scale(1.35);opacity:0}}
+  .center-btn:hover{transform:translate(-50%,-50%) scale(1.07)}
+  .center-btn:active{transform:translate(-50%,-50%) scale(.96)}
+  .center-btn:disabled{filter:grayscale(.6);cursor:not-allowed;transform:translate(-50%,-50%)}
+  .center-btn:disabled::before{animation:none;opacity:0}
+
+  .panel{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:28px;padding:24px;width:min(92vw,360px);
+         box-shadow:0 18px 40px rgba(120,90,150,.18);border:2px solid var(--line)}
+  .panel h2{font-family:var(--font-title);font-size:21px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .panel h2 .em{font-size:22px}
+  textarea{width:100%;height:220px;resize:vertical;border-radius:18px;border:2px solid rgba(255,255,255,.9);background:rgba(255,255,255,.7);
+    color:var(--text);padding:12px 14px;font-size:16px;font-weight:600;line-height:1.6;font-family:var(--font);outline:none;transition:border .2s,box-shadow .2s}
+  textarea:focus{border-color:#ffb3c6;box-shadow:0 0 0 4px rgba(255,179,198,.3)}
+  .hint{font-size:13px;color:var(--muted);margin-top:6px;font-weight:700}
+  .row{display:flex;gap:10px;margin-top:12px}
+  .row button{flex:1;padding:11px;border-radius:14px;border:none;cursor:pointer;font-family:var(--font);font-weight:800;font-size:14px;color:var(--text);transition:transform .15s,box-shadow .15s}
+  .row button:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(120,90,150,.2)}
+  .btn-lilac{background:linear-gradient(135deg,#d9ccff,#bdb2ff)} .btn-peach{background:linear-gradient(135deg,#ffe3bf,#ffd6a5)}
+  .toggle{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer}
+  .toggle input{appearance:none;width:42px;height:24px;border-radius:999px;background:#e6dff0;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
+  .toggle input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+  .toggle input:checked{background:linear-gradient(135deg,#ff9ebc,var(--accent))} .toggle input:checked::after{left:21px}
+  .count{margin-top:12px;font-size:14px;font-weight:800;color:var(--accent-dark)}
+
+  .history{position:relative;z-index:1;width:100%;max-width:1120px;margin-top:34px}
+  .history .panel{width:100%}
+  .history h2{justify-content:space-between}
+  .history h2 .acts button{background:rgba(255,255,255,.8);border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-family:var(--font);font-weight:800;font-size:13px;cursor:pointer;color:var(--text);margin-left:6px;transition:transform .15s}
+  .history h2 .acts button:hover{transform:translateY(-2px)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{display:flex;align-items:center;gap:8px;padding:8px 16px 8px 8px;border-radius:999px;font-weight:800;font-size:15px;animation:popin .4s cubic-bezier(.2,1.4,.4,1);box-shadow:0 6px 14px rgba(120,90,150,.15)}
+  .chip .num{width:28px;height:28px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:13px}
+  @keyframes popin{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+  .empty{color:var(--muted);font-weight:700;font-style:italic}
+
+  .overlay{position:fixed;inset:0;background:rgba(61,55,86,.4);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:16px}
+  .overlay.show{display:flex}
+  .modal{background:rgba(255,255,255,.92);border-radius:36px;padding:42px 36px 34px;text-align:center;width:min(92vw,540px);
+    box-shadow:0 30px 80px rgba(60,40,90,.35);border:4px solid #fff;animation:bounce .6s cubic-bezier(.2,1.5,.4,1);position:relative;overflow:hidden}
+  .modal::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent 0 70%,rgba(255,179,198,.35) 75%,transparent 80%);animation:orbit 4s linear infinite;pointer-events:none}
+  .modal>*{position:relative}
+  @keyframes bounce{from{transform:scale(.3) rotate(-6deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+  .modal .emoji{font-size:66px;line-height:1;animation:wiggle 1.2s ease-in-out infinite;display:inline-block}
+  .modal .line{color:var(--muted);font-weight:800;font-size:15px;margin-top:10px}
+  .modal .name{font-family:var(--font-title);font-weight:700;font-size:clamp(40px,8vw,68px);line-height:1.1;margin:8px 0 6px;word-break:break-word;
+    background:linear-gradient(90deg,#ff7aa2,#ffa94d,#5fcfff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .modal .phrase{color:var(--text);font-weight:700;font-size:17px;margin-bottom:24px}
+  .modal button{padding:13px 28px;border-radius:999px;border:none;font-family:var(--font);font-weight:800;font-size:16px;cursor:pointer;margin:4px;transition:transform .15s}
+  .modal button:hover{transform:translateY(-2px)}
+  .btn-ok{background:linear-gradient(145deg,#ff9ebc,var(--accent));color:#fff;box-shadow:0 8px 20px rgba(232,93,135,.4)}
+  .btn-rm{background:#f1ecf7;color:var(--text)}
+  .confetti{position:fixed;top:-12px;width:10px;height:14px;border-radius:3px;z-index:70;pointer-events:none;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(800deg);opacity:0}}
+  body.quake{animation:quake .5s linear}
+  @keyframes quake{0%,100%{transform:translate(0)}10%{transform:translate(-8px,4px)}20%{transform:translate(8px,-6px)}30%{transform:translate(-6px,6px)}40%{transform:translate(6px,4px)}50%{transform:translate(-8px,-4px)}60%{transform:translate(6px,6px)}70%{transform:translate(-4px,-6px)}80%{transform:translate(4px,4px)}90%{transform:translate(-2px,2px)}}
+
+  @media (max-width:640px){.hero{width:56px;height:80px;left:-28px}.center-btn{width:92px;height:92px;font-size:19px}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+<div class="stars" id="stars"></div>
+
+<header>
+  <h1><span class="em">🎡</span> Roda Nasib</h1>
+  <div class="tag">Pembagian tugas kelompok tanpa drama. Yang kena, ya kena~</div>
+</header>
+
+<div class="layout">
+  <div class="arena" id="arena">
+    <div class="ring">
+      <div class="orb" style="--i:0;--d:0.00s"><div class="hero"><img class="pic" src="karakter/batman.png" alt="" onload="this.parentNode.classList.add(&quot;has-pic&quot;)" onerror="this.remove()"><svg viewBox="0 0 100 140"><g class="cape"><path d="M20 68 L12 128 L50 112 L88 128 L80 68Z" fill="#1d1f33"/></g><g class="legs"><rect x="38" y="78" width="10" height="34" rx="5" fill="#2b2d42"/><rect x="52" y="78" width="10" height="34" rx="5" fill="#2b2d42"/><rect x="35" y="104" width="15" height="12" rx="5" fill="#2b2d42"/><rect x="50" y="104" width="15" height="12" rx="5" fill="#2b2d42"/></g><g class="body"><rect x="30" y="64" width="40" height="28" rx="12" fill="#2b2d42"/><g class="armL"><rect x="18" y="68" width="12" height="26" rx="6" fill="#2b2d42"/><circle cx="24" cy="94" r="6" fill="#ffd9b3"/></g><g class="armR"><rect x="70" y="68" width="12" height="26" rx="6" fill="#2b2d42"/><circle cx="76" cy="94" r="6" fill="#ffd9b3"/></g><ellipse cx="50" cy="76" rx="10" ry="6" fill="#ffd60a"/><path d="M44 76 L50 72 L56 76 L50 80Z" fill="#2b2d42"/><rect x="30" y="86" width="40" height="5" fill="#ffd60a"/></g><g class="head"><circle cx="50" cy="40" r="32" fill="#ffd9b3" stroke="#fff" stroke-width="4"/><path d="M18 36 Q50 12 82 36 L82 44 Q50 30 18 44Z" fill="#2b2d42"/><path d="M30 24 L34 4 L44 22Z M70 24 L66 4 L56 22Z" fill="#2b2d42"/><ellipse cx="41" cy="40" rx="8" ry="5" fill="#fff"/><ellipse cx="59" cy="40" rx="8" ry="5" fill="#fff"/><g class="eyes"><circle cx="41" cy="40" r="3.5" fill="#3b3550"/><circle cx="59" cy="40" r="3.5" fill="#3b3550"/></g><circle cx="42.5" cy="38.5" r="1.2" fill="#fff"/><circle cx="60.5" cy="38.5" r="1.2" fill="#fff"/><path d="M44 50 Q50 56 56 50" stroke="#3b3550" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="48" r="4" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="48" r="4" fill="#ffb3c6" opacity=".7"/></g></svg><span class="nm">Batman</span></div></div>
+      <div class="orb" style="--i:1;--d:0.37s"><div class="hero"><img class="pic" src="karakter/flash.png" alt="" onload="this.parentNode.classList.add(&quot;has-pic&quot;)" onerror="this.remove()"><svg viewBox="0 0 100 140"><g class="legs"><rect x="38" y="78" width="10" height="34" rx="5" fill="#e63946"/><rect x="52" y="78" width="10" height="34" rx="5" fill="#e63946"/><rect x="35" y="104" width="15" height="12" rx="5" fill="#ffd60a"/><rect x="50" y="104" width="15" height="12" rx="5" fill="#ffd60a"/></g><g class="body"><rect x="30" y="64" width="40" height="28" rx="12" fill="#e63946"/><g class="armL"><rect x="18" y="68" width="12" height="26" rx="6" fill="#e63946"/><circle cx="24" cy="94" r="6" fill="#ffd9b3"/></g><g class="armR"><rect x="70" y="68" width="12" height="26" rx="6" fill="#e63946"/><circle cx="76" cy="94" r="6" fill="#ffd9b3"/></g><circle cx="50" cy="76" r="8" fill="#fff"/><path d="M52 69 L46 77 L50 77 L47 84 L55 75 L51 75Z" fill="#e63946"/></g><g class="head"><circle cx="50" cy="40" r="32" fill="#ffd9b3" stroke="#fff" stroke-width="4"/><path d="M18 40 Q50 8 82 40 L82 46 Q50 28 18 46Z" fill="#e63946"/><path d="M14 36 L8 26 L22 32Z M86 36 L92 26 L78 32Z" fill="#ffd60a"/><g class="eyes"><circle cx="41" cy="40" r="3.5" fill="#3b3550"/><circle cx="59" cy="40" r="3.5" fill="#3b3550"/></g><circle cx="42.5" cy="38.5" r="1.2" fill="#fff"/><circle cx="60.5" cy="38.5" r="1.2" fill="#fff"/><path d="M44 50 Q50 56 56 50" stroke="#3b3550" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="48" r="4" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="48" r="4" fill="#ffb3c6" opacity=".7"/></g></svg><span class="nm">The Flash</span></div></div>
+      <div class="orb" style="--i:2;--d:0.74s"><div class="hero"><img class="pic" src="karakter/superman.png" alt="" onload="this.parentNode.classList.add(&quot;has-pic&quot;)" onerror="this.remove()"><svg viewBox="0 0 100 140"><g class="cape"><path d="M22 68 L14 126 L50 114 L86 126 L78 68Z" fill="#e63946"/></g><g class="legs"><rect x="38" y="78" width="10" height="34" rx="5" fill="#1d3557"/><rect x="52" y="78" width="10" height="34" rx="5" fill="#1d3557"/><rect x="35" y="104" width="15" height="12" rx="5" fill="#e63946"/><rect x="50" y="104" width="15" height="12" rx="5" fill="#e63946"/></g><g class="body"><rect x="30" y="64" width="40" height="28" rx="12" fill="#1d3557"/><g class="armL"><rect x="18" y="68" width="12" height="26" rx="6" fill="#1d3557"/><circle cx="24" cy="94" r="6" fill="#ffd9b3"/></g><g class="armR"><rect x="70" y="68" width="12" height="26" rx="6" fill="#1d3557"/><circle cx="76" cy="94" r="6" fill="#ffd9b3"/></g><path d="M40 70 L60 70 L50 84Z" fill="#e63946" stroke="#ffd60a" stroke-width="2"/><text x="50" y="79" font-size="9" fill="#ffd60a" text-anchor="middle" font-family="Arial" font-weight="700">S</text><rect x="30" y="88" width="40" height="4" fill="#e63946"/></g><g class="head"><circle cx="50" cy="40" r="32" fill="#ffd9b3" stroke="#fff" stroke-width="4"/><path d="M18 38 Q50 4 82 38 L80 32 Q50 12 20 32Z" fill="#1d3557"/><path d="M46 14 Q52 22 58 16 Q52 30 46 14Z" fill="#1d3557"/><g class="eyes"><circle cx="41" cy="40" r="3.5" fill="#3b3550"/><circle cx="59" cy="40" r="3.5" fill="#3b3550"/></g><circle cx="42.5" cy="38.5" r="1.2" fill="#fff"/><circle cx="60.5" cy="38.5" r="1.2" fill="#fff"/><path d="M44 50 Q50 56 56 50" stroke="#3b3550" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="48" r="4" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="48" r="4" fill="#ffb3c6" opacity=".7"/></g></svg><span class="nm">Superman</span></div></div>
+      <div class="orb" style="--i:3;--d:1.11s"><div class="hero"><img class="pic" src="karakter/cyborg.png" alt="" onload="this.parentNode.classList.add(&quot;has-pic&quot;)" onerror="this.remove()"><svg viewBox="0 0 100 140"><g class="legs"><rect x="38" y="78" width="10" height="34" rx="5" fill="#8e9aaf"/><rect x="52" y="78" width="10" height="34" rx="5" fill="#8e9aaf"/><rect x="35" y="104" width="15" height="12" rx="5" fill="#5c677d"/><rect x="50" y="104" width="15" height="12" rx="5" fill="#5c677d"/></g><g class="body"><rect x="30" y="64" width="40" height="28" rx="12" fill="#8e9aaf"/><g class="armL"><rect x="18" y="68" width="12" height="26" rx="6" fill="#8e9aaf"/><circle cx="24" cy="94" r="6" fill="#8d5524"/></g><g class="armR"><rect x="70" y="68" width="12" height="26" rx="6" fill="#8e9aaf"/><circle cx="76" cy="94" r="6" fill="#8d5524"/></g><circle class="glow" cx="50" cy="76" r="6" fill="#4cc9f0"/><rect x="18" y="68" width="12" height="26" rx="6" fill="#5c677d"/><circle cx="24" cy="94" r="6" fill="#5c677d"/><rect x="36" y="86" width="28" height="4" fill="#4cc9f0"/></g><g class="head"><circle cx="50" cy="40" r="32" fill="#8d5524" stroke="#fff" stroke-width="4"/><path d="M50 8 A32 32 0 0 1 82 40 L82 56 L50 56Z" fill="#8e9aaf"/><circle cx="62" cy="40" r="8" fill="#d62828"/><circle class="glow" cx="62" cy="40" r="3.5" fill="#ff8585"/><g class="eyes"><circle cx="41" cy="40" r="3.5" fill="#3b3550"/><circle cx="59" cy="40" r="3.5" fill="#3b3550"/></g><circle cx="42.5" cy="38.5" r="1.2" fill="#fff"/><circle cx="60.5" cy="38.5" r="1.2" fill="#fff"/><path d="M44 50 Q50 56 56 50" stroke="#3b3550" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="48" r="4" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="48" r="4" fill="#ffb3c6" opacity=".7"/></g></svg><span class="nm">Cyborg</span></div></div>
+      <div class="orb" style="--i:4;--d:1.48s"><div class="hero"><img class="pic" src="karakter/wonderwoman.png" alt="" onload="this.parentNode.classList.add(&quot;has-pic&quot;)" onerror="this.remove()"><svg viewBox="0 0 100 140"><g class="legs"><rect x="38" y="78" width="10" height="34" rx="5" fill="#1d3557"/><rect x="52" y="78" width="10" height="34" rx="5" fill="#1d3557"/><rect x="35" y="104" width="15" height="12" rx="5" fill="#e63946"/><rect x="50" y="104" width="15" height="12" rx="5" fill="#e63946"/></g><g class="body"><rect x="30" y="64" width="40" height="28" rx="12" fill="#e63946"/><g class="armL"><rect x="18" y="68" width="12" height="26" rx="6" fill="#e63946"/><circle cx="24" cy="94" r="6" fill="#ffd9b3"/></g><g class="armR"><rect x="70" y="68" width="12" height="26" rx="6" fill="#e63946"/><circle cx="76" cy="94" r="6" fill="#ffd9b3"/></g><path d="M36 68 Q50 76 64 68 L64 74 Q50 82 36 74Z" fill="#ffd60a"/><rect x="30" y="80" width="40" height="12" fill="#1d3557"/><circle cx="40" cy="86" r="2" fill="#fff"/><circle cx="50" cy="86" r="2" fill="#fff"/><circle cx="60" cy="86" r="2" fill="#fff"/><rect x="18" y="82" width="12" height="10" rx="3" fill="#c0c0c0"/><rect x="70" y="82" width="12" height="10" rx="3" fill="#c0c0c0"/></g><g class="head"><circle cx="50" cy="40" r="32" fill="#ffd9b3" stroke="#fff" stroke-width="4"/><path class="hair" d="M16 44 Q14 10 50 8 Q86 10 84 44 L84 70 L70 60 L68 34 Q50 26 32 34 L30 60 L16 70Z" fill="#3a2a1a"/><path d="M30 28 Q50 20 70 28 L70 34 Q50 28 30 34Z" fill="#ffd60a"/><path d="M50 20 L47 26 L53 26Z" fill="#e63946"/><g class="eyes"><circle cx="41" cy="40" r="3.5" fill="#3b3550"/><circle cx="59" cy="40" r="3.5" fill="#3b3550"/></g><circle cx="42.5" cy="38.5" r="1.2" fill="#fff"/><circle cx="60.5" cy="38.5" r="1.2" fill="#fff"/><path d="M44 50 Q50 56 56 50" stroke="#3b3550" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="48" r="4" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="48" r="4" fill="#ffb3c6" opacity=".7"/></g></svg><span class="nm">Wonder Woman</span></div></div>
+      <div class="orb" style="--i:5;--d:1.85s"><div class="hero"><img class="pic" src="karakter/greenlantern.png" alt="" onload="this.parentNode.classList.add(&quot;has-pic&quot;)" onerror="this.remove()"><svg viewBox="0 0 100 140"><g class="legs"><rect x="38" y="78" width="10" height="34" rx="5" fill="#1b1b1b"/><rect x="52" y="78" width="10" height="34" rx="5" fill="#1b1b1b"/><rect x="35" y="104" width="15" height="12" rx="5" fill="#2a9d8f"/><rect x="50" y="104" width="15" height="12" rx="5" fill="#2a9d8f"/></g><g class="body"><rect x="30" y="64" width="40" height="28" rx="12" fill="#2a9d8f"/><g class="armL"><rect x="18" y="68" width="12" height="26" rx="6" fill="#2a9d8f"/><circle cx="24" cy="94" r="6" fill="#ffd9b3"/></g><g class="armR"><rect x="70" y="68" width="12" height="26" rx="6" fill="#2a9d8f"/><circle cx="76" cy="94" r="6" fill="#ffd9b3"/></g><circle cx="50" cy="76" r="8" fill="#fff"/><circle cx="50" cy="76" r="5" fill="none" stroke="#06d6a0" stroke-width="2.5"/><rect x="46" y="68" width="8" height="3" fill="#06d6a0"/><rect x="46" y="81" width="8" height="3" fill="#06d6a0"/><circle class="glow" cx="76" cy="94" r="7" fill="#06d6a0" stroke="#fff" stroke-width="2"/></g><g class="head"><circle cx="50" cy="40" r="32" fill="#ffd9b3" stroke="#fff" stroke-width="4"/><path d="M20 36 Q50 6 80 36 L78 30 Q50 14 22 30Z" fill="#3a2a1a"/><path d="M26 44 Q50 32 74 44 L74 36 Q50 24 26 36Z" fill="#2a9d8f"/><ellipse cx="41" cy="40" rx="8" ry="5" fill="#fff"/><ellipse cx="59" cy="40" rx="8" ry="5" fill="#fff"/><g class="eyes"><circle cx="41" cy="40" r="3.5" fill="#3b3550"/><circle cx="59" cy="40" r="3.5" fill="#3b3550"/></g><circle cx="42.5" cy="38.5" r="1.2" fill="#fff"/><circle cx="60.5" cy="38.5" r="1.2" fill="#fff"/><path d="M44 50 Q50 56 56 50" stroke="#3b3550" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="48" r="4" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="48" r="4" fill="#ffb3c6" opacity=".7"/></g></svg><span class="nm">Green Lantern</span></div></div>
+      <div class="orb" style="--i:6;--d:2.22s"><div class="hero"><img class="pic" src="karakter/robin.png" alt="" onload="this.parentNode.classList.add(&quot;has-pic&quot;)" onerror="this.remove()"><svg viewBox="0 0 100 140"><g class="cape"><path d="M22 68 L16 124 L50 112 L84 124 L78 68Z" fill="#ffd60a"/><path d="M22 68 L50 112 L78 68Z" fill="#1b1b1b"/></g><g class="legs"><rect x="38" y="78" width="10" height="34" rx="5" fill="#2a9d8f"/><rect x="52" y="78" width="10" height="34" rx="5" fill="#2a9d8f"/><rect x="35" y="104" width="15" height="12" rx="5" fill="#2a9d8f"/><rect x="50" y="104" width="15" height="12" rx="5" fill="#2a9d8f"/></g><g class="body"><rect x="30" y="64" width="40" height="28" rx="12" fill="#e63946"/><g class="armL"><rect x="18" y="68" width="12" height="26" rx="6" fill="#e63946"/><circle cx="24" cy="94" r="6" fill="#ffd9b3"/></g><g class="armR"><rect x="70" y="68" width="12" height="26" rx="6" fill="#e63946"/><circle cx="76" cy="94" r="6" fill="#ffd9b3"/></g><circle cx="40" cy="74" r="6" fill="#ffd60a"/><text x="40" y="77" font-size="8" fill="#e63946" text-anchor="middle" font-family="Arial" font-weight="700">R</text><rect x="30" y="86" width="40" height="5" fill="#ffd60a"/></g><g class="head"><circle cx="50" cy="40" r="32" fill="#ffd9b3" stroke="#fff" stroke-width="4"/><path d="M20 36 Q50 4 80 36 L78 30 Q50 14 22 30Z" fill="#1b1b1b"/><path d="M28 24 L22 12 L36 20Z M72 24 L78 12 L64 20Z" fill="#1b1b1b"/><path d="M28 44 Q50 34 72 44 L72 36 Q50 28 28 36Z" fill="#2b2d42"/><ellipse cx="41" cy="40" rx="7" ry="4" fill="#fff"/><ellipse cx="59" cy="40" rx="7" ry="4" fill="#fff"/><g class="eyes"><circle cx="41" cy="40" r="3.5" fill="#3b3550"/><circle cx="59" cy="40" r="3.5" fill="#3b3550"/></g><circle cx="42.5" cy="38.5" r="1.2" fill="#fff"/><circle cx="60.5" cy="38.5" r="1.2" fill="#fff"/><path d="M44 50 Q50 56 56 50" stroke="#3b3550" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="48" r="4" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="48" r="4" fill="#ffb3c6" opacity=".7"/></g></svg><span class="nm">Robin</span></div></div>
+      <div class="orb" style="--i:7;--d:0.19s"><div class="hero"><img class="pic" src="karakter/joker.png" alt="" onload="this.parentNode.classList.add(&quot;has-pic&quot;)" onerror="this.remove()"><svg viewBox="0 0 100 140"><g class="legs"><rect x="38" y="78" width="10" height="34" rx="5" fill="#6a4c93"/><rect x="52" y="78" width="10" height="34" rx="5" fill="#6a4c93"/><rect x="35" y="104" width="15" height="12" rx="5" fill="#1b1b1b"/><rect x="50" y="104" width="15" height="12" rx="5" fill="#1b1b1b"/></g><g class="body"><rect x="30" y="64" width="40" height="28" rx="12" fill="#6a4c93"/><g class="armL"><rect x="18" y="68" width="12" height="26" rx="6" fill="#6a4c93"/><circle cx="24" cy="94" r="6" fill="#dff7e8"/></g><g class="armR"><rect x="70" y="68" width="12" height="26" rx="6" fill="#6a4c93"/><circle cx="76" cy="94" r="6" fill="#dff7e8"/></g><path d="M40 64 L50 80 L60 64Z" fill="#06d6a0"/><rect x="30" y="64" width="40" height="6" fill="#ff9f1c"/><circle cx="36" cy="76" r="5" fill="#ff6b6b"/><rect x="18" y="68" width="12" height="26" rx="6" fill="#6a4c93"/></g><g class="head"><circle cx="50" cy="40" r="32" fill="#dff7e8" stroke="#fff" stroke-width="4"/><path class="hair" d="M14 40 Q24 2 50 18 Q76 2 86 40 L84 34 Q72 14 50 30 Q28 14 16 34Z" fill="#2a9d8f"/><path d="M34 50 Q50 68 66 50" stroke="#c1121f" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="32" y="54" width="36" height="10" fill="#dff7e8"/><path d="M36 52 Q50 62 64 52" stroke="#c1121f" stroke-width="4" fill="none" stroke-linecap="round"/><g class="eyes"><circle cx="41" cy="40" r="3.5" fill="#3b3550"/><circle cx="59" cy="40" r="3.5" fill="#3b3550"/></g><circle cx="42.5" cy="38.5" r="1.2" fill="#fff"/><circle cx="60.5" cy="38.5" r="1.2" fill="#fff"/><path d="M44 50 Q50 56 56 50" stroke="#3b3550" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="30" cy="48" r="4" fill="#ffb3c6" opacity=".7"/><circle cx="70" cy="48" r="4" fill="#ffb3c6" opacity=".7"/></g></svg><span class="nm">Joker</span></div></div>
+      </div>
+    <div class="wheel-wrap" id="wrap">
+      <div class="pointer" id="pointer"></div>
+      <canvas id="wheel" width="900" height="900"></canvas>
+      <button class="center-btn" id="spinBtn">PUTAR!</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2><span class="em">📝</span> Daftar Nama</h2>
+    <textarea id="names" placeholder="Satu nama per baris, contoh:&#10;Bilal&#10;Ahmad&#10;Fatimah"></textarea>
+    <div class="hint">Satu nama per baris. Minimal 2 nama ya.</div>
+    <div class="row">
+      <button class="btn-lilac" id="shufBtn">🔀 Acak Urutan</button>
+      <button class="btn-peach" id="clrBtn">🧹 Hapus Semua</button>
+    </div>
+    <label class="toggle"><input type="checkbox" id="removeAfter" checked> Keluarkan yang terpilih dari roda</label>
+    <label class="toggle"><input type="checkbox" id="soundOn" checked> Suara tik, drum &amp; kaget</label>
+    <div class="count" id="count">0 nama di roda</div>
+  </div>
+</div>
+
+<section class="history">
+  <div class="panel">
+    <h2><span>🏆 Urutan Terpilih</span>
+      <span class="acts"><button id="copyBtn">Salin</button><button id="resetBtn">Bersihkan</button></span></h2>
+    <div class="chips" id="chips"></div>
+    <div class="empty" id="empty">Belum ada yang kena. Putar dulu rodanya!</div>
+  </div>
+</section>
+
+<audio id="kaget" src="kaget.wav" preload="auto"></audio>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="emoji" id="emoji">🎉</div>
+    <div class="line">Dan yang terpilih adalah...</div>
+    <div class="name" id="winner">—</div>
+    <div class="phrase" id="phrase">—</div>
+    <button class="btn-ok" id="okBtn">Oke, lanjut! ✨</button>
+    <button class="btn-rm" id="rmBtn">Keluarkan dari roda</button>
+  </div>
+</div>
+
+<script>
+const TAU=Math.PI*2;
+const COLORS=['#ffb3c6','#ffd6a5','#fdffb6','#caffbf','#9bf6ff','#bdb2ff','#ffc6ff','#a0e7e5','#ffadad','#b5ead7'];
+const TEXTC='#3d3756';
+const PHRASES=['Selamat ya, semangat ngerjainnya! 💪','Tenang, kamu pasti bisa 🌟','Nasib sudah berbicara, hehe 😆','Jangan sedih, ini kehormatan 🏅',
+  'Roda tidak pernah salah pilih ✨','Yeay! Giliran kamu bersinar 🌈','Takdir memang lucu ya 🙈','Selamat menjalankan amanah 🫡','Udah, terima aja ya~ 😇'];
+const EMOJIS=['🎉','🥳','🎊','✨','🌟','🎈','🍀','🦄'];
+
+// stars
+(()=>{const w=document.getElementById('stars');for(let i=0;i<40;i++){const s=document.createElement('div');s.className='star';
+  s.style.left=Math.random()*100+'vw';s.style.top=Math.random()*100+'vh';s.style.setProperty('--t',(2+Math.random()*3)+'s');s.style.setProperty('--d',(-Math.random()*5)+'s');
+  const sz=4+Math.random()*8;s.style.width=sz+'px';s.style.height=sz+'px';w.appendChild(s);}})();
+
+const canvas=document.getElementById('wheel'),ctx=canvas.getContext('2d');
+const ta=document.getElementById('names'),spinBtn=document.getElementById('spinBtn'),wrap=document.getElementById('wrap'),arena=document.getElementById('arena'),pointer=document.getElementById('pointer');
+const S=canvas.width,R=S/2;
+let angle=0,items=[],busy=false,lastWinner=null;const results=[];
+
+const getNames=()=>ta.value.split('\n').map(s=>s.trim()).filter(Boolean);
+function setNames(a){ta.value=a.join('\n');save();draw();}
+function save(){try{localStorage.setItem('roda_names',ta.value);}catch(e){}}
+
+function draw(){
+  items=getNames();const n=items.length;document.getElementById('count').textContent=n+' nama di roda';
+  ctx.clearRect(0,0,S,S);
+  if(n===0){ctx.fillStyle='#fff3f7';ctx.beginPath();ctx.arc(R,R,R,0,TAU);ctx.fill();
+    ctx.fillStyle='#b9b0cc';ctx.font='600 40px Fredoka, Segoe UI';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Isi nama dulu yuk~',R,R);return;}
+  const slice=TAU/n;
+  for(let i=0;i<n;i++){
+    const a0=angle+i*slice;let col=COLORS[i%COLORS.length];if(n%COLORS.length===1&&i===n-1)col=COLORS[(i+4)%COLORS.length];
+    const g=ctx.createRadialGradient(R,R,60,R,R,R);g.addColorStop(0,'#ffffff');g.addColorStop(.25,col);g.addColorStop(1,col);
+    ctx.beginPath();ctx.moveTo(R,R);ctx.arc(R,R,R,a0,a0+slice);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.stroke();
+    ctx.save();ctx.translate(R,R);ctx.rotate(a0+slice/2);ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle=TEXTC;
+    const fs=Math.max(18,Math.min(46,600/n+14));ctx.font='600 '+fs+'px Fredoka, Segoe UI, sans-serif';
+    let label=items[i];const maxW=R-130;while(ctx.measureText(label).width>maxW&&label.length>2)label=label.slice(0,-2)+'…';
+    ctx.fillText(label,R-36,0);ctx.restore();
+  }
+  ctx.save();ctx.translate(R,R);for(let i=0;i<n;i++){ctx.rotate(slice);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(R-18,0,6,0,TAU);ctx.fill();}ctx.restore();
+  ctx.beginPath();ctx.arc(R,R,80,0,TAU);ctx.fillStyle='#fff';ctx.fill();
+}
+const indexAtPointer=()=>{const n=items.length;return n?Math.floor((((-Math.PI/2-angle)%TAU)+TAU)%TAU/(TAU/n)):-1;};
+
+/* sound */
+let AC=null;const snd=()=>document.getElementById('soundOn').checked;const ac=()=>AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+function tick(){pointer.classList.remove('tick');void pointer.offsetWidth;pointer.classList.add('tick');if(!snd())return;
+  try{const c=ac(),o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=1100;g.gain.setValueAtTime(.07,c.currentTime);
+  g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.05);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.05);}catch(e){}}
+function drum(){if(!snd())return;try{const c=ac(),buf=c.createBuffer(1,c.sampleRate*.08,c.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+  const s=c.createBufferSource();s.buffer=buf;const f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=500;const g=c.createGain();g.gain.value=.35;
+  s.connect(f);f.connect(g);g.connect(c.destination);s.start();}catch(e){}}
+function tada(){if(!snd())return;try{const c=ac();[523,659,784,1047].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;
+  const t=c.currentTime+i*.09;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.5);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.5);});}catch(e){}}
+function playKaget(){if(!snd())return;const a=document.getElementById('kaget');if(a&&a.readyState>=2){a.currentTime=0;a.volume=1;a.play().catch(tada);}else tada();}
+
+const easeOutQuart=t=>1-Math.pow(1-t,4);
+function spin(){
+  if(busy)return;items=getNames();if(items.length<2){alert('Masukkan minimal 2 nama ya!');return;}
+  busy=true;spinBtn.disabled=true;spinBtn.textContent='...';arena.classList.add('spinning');arena.classList.remove('party');
+  const n=items.length,slice=TAU/n,target=Math.floor(Math.random()*n),mid=target*slice+slice/2,jitter=(Math.random()-.5)*slice*.7;
+  const finalAngle=-Math.PI/2-mid+jitter,start=angle%TAU,delta=((finalAngle-start)%TAU+TAU)%TAU+(5+Math.floor(Math.random()*3))*TAU;
+  const dur=5000+Math.random()*1500,t0=performance.now();let lastIdx=-1,drumT=0;
+  function frame(now){const t=Math.min(1,(now-t0)/dur);angle=start+delta*easeOutQuart(t);draw();
+    const idx=indexAtPointer();if(idx!==lastIdx){tick();lastIdx=idx;}
+    if(t>.6&&now-drumT>Math.max(70,400*(1-t))){drum();drumT=now;}
+    if(t<1)requestAnimationFrame(frame);
+    else{const base=angle,w0=performance.now();wrap.classList.add('shake');
+      function wobble(n2){const k=Math.min(1,(n2-w0)/600);angle=base+Math.sin(k*Math.PI*4)*(1-k)*.03;draw();
+        if(k<1)requestAnimationFrame(wobble);else{angle=base;draw();wrap.classList.remove('shake');finish(indexAtPointer());}}
+      requestAnimationFrame(wobble);}
+  }
+  requestAnimationFrame(frame);
+}
+function finish(idx){
+  busy=false;spinBtn.disabled=false;spinBtn.textContent='PUTAR!';arena.classList.remove('spinning');arena.classList.add('party');
+  setTimeout(()=>arena.classList.remove('party'),3000);
+  lastWinner=items[idx];results.push({name:lastWinner,color:COLORS[idx%COLORS.length]});renderChips();
+  document.getElementById('winner').textContent=lastWinner;
+  document.getElementById('phrase').textContent=PHRASES[Math.floor(Math.random()*PHRASES.length)];
+  document.getElementById('emoji').textContent=EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+  document.getElementById('rmBtn').style.display=document.getElementById('removeAfter').checked?'none':'inline-block';
+  document.getElementById('overlay').classList.add('show');confetti();
+  document.body.classList.remove('quake');void document.body.offsetWidth;document.body.classList.add('quake');playKaget();
+}
+function removeWinner(){if(lastWinner===null)return;const a=getNames(),i=a.indexOf(lastWinner);if(i>-1)a.splice(i,1);setNames(a);lastWinner=null;}
+function confetti(){for(let i=0;i<100;i++){const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'vw';
+  c.style.background=COLORS[i%COLORS.length];c.style.animationDuration=(2+Math.random()*2)+'s';c.style.animationDelay=(Math.random()*.4)+'s';
+  if(i%3===0)c.style.borderRadius='50%';document.body.appendChild(c);setTimeout(()=>c.remove(),4600);}}
+function renderChips(){const el=document.getElementById('chips');el.innerHTML='';document.getElementById('empty').style.display=results.length?'none':'block';
+  results.forEach((r,i)=>{const d=document.createElement('div');d.className='chip';d.style.background=r.color;
+    d.innerHTML='<span class="num">'+(i+1)+'</span><span></span>';d.lastChild.textContent=r.name;el.appendChild(d);});}
+
+document.getElementById('okBtn').onclick=()=>{document.getElementById('overlay').classList.remove('show');if(document.getElementById('removeAfter').checked)removeWinner();};
+document.getElementById('rmBtn').onclick=()=>{document.getElementById('overlay').classList.remove('show');removeWinner();};
+document.getElementById('shufBtn').onclick=()=>{const a=getNames();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}setNames(a);};
+document.getElementById('clrBtn').onclick=()=>{if(confirm('Hapus semua nama?'))setNames([]);};
+document.getElementById('copyBtn').onclick=()=>{if(!results.length)return;navigator.clipboard.writeText('*Urutan Terpilih*\n'+results.map((r,i)=>(i+1)+'. '+r.name).join('\n'))
+  .then(()=>{const b=document.getElementById('copyBtn');b.textContent='Tersalin!';setTimeout(()=>b.textContent='Salin',1500);});};
+document.getElementById('resetBtn').onclick=()=>{results.length=0;renderChips();};
+spinBtn.onclick=spin;ta.addEventListener('input',()=>{save();if(!busy)draw();});
+try{const s=localStorage.getItem('roda_names');if(s)ta.value=s;}catch(e){}
+if(!ta.value)ta.value='Bilal\nAhmad\nFatimah\nRizky\nSiti\nDimas';
+draw();renderChips();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Taruh gambar PNG (latar transparan) di folder ini dengan nama persis:
+
+  batman.png
+  flash.png
+  superman.png
+  cyborg.png
+  wonderwoman.png
+  greenlantern.png
+  robin.png
+  joker.png
+
+Tips cari gambar: ketik di Google Images "batman png transparent full body"
+lalu pilih yang latarnya kotak-kotak (transparan). Ukuran ideal: tinggi 400-800 px.
+Gambar yang belum ada akan otomatis diganti versi kartun.
